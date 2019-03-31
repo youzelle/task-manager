@@ -23,24 +23,35 @@ MongoClient.connect(connectionURL, {useNewUrlParser: true}, (error, client) => {
     //database reference to manipulate created database
     const db = client.db(databaseName);
 
-    //asynchronous
-    // db.collection("users").findOne({_id: new ObjectID("5ca0c42b6cd29626b0763138")}, (error, user) => {
-    //     if (error) {
-    //         return console.log("unable to fetch");
+    // db.collection("users").updateOne({
+    //     _id: new ObjectID("5ca0a93369d13225ce9ba473")
+    // }, {
+    //     $inc: {
+    //         age: 1
     //     }
-
-    //     console.log(user)
+    // }).then((result) => {
+    //     console.log(result);
+    // }).catch((error) => {
+    //     console.log(error);
     // });
 
-    db.collection("tasks").findOne({}, {sort: {_id: -1}, limit: 1}, (error, result) => {
-        if (error) {
-            return console.log("Could not retrieve result");
+    db.collection("tasks").updateMany({
+        completed: false
+    },{
+        $set: {
+            completed: true
         }
-        console.log(result);
+    }).then((result) => {
+        console.log(result.modifiedCount);
+    }).catch((error) => {
+        console.log(error);
+    })
 
-    });
 
-    db.collection("tasks").find({completed: false}).toArray((error, result) => {
+    db.collection("tasks").find().toArray().then((result) => {
         console.log(result);
-    });
+    }).catch((error) => {
+        console.log(error);
+    })
+
 });
