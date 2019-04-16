@@ -52,40 +52,45 @@ app.get('/users/:id', async (req,res) => {
     }
 })
 
-app.post('/tasks', (req, res) => {
+app.post('/tasks', async (req, res) => {
     const task = new Task(req.body);
 
-    task.save().then(() => {
+    try {
+        await task.save();
         res.status(201).send(task);
-    }).catch((error) => {
+    } catch (error) {
         res.status(500).send(error);
-    });
+    }
+    
 });
 
-app.get('/tasks', (req, res) => {
-    Task.find({}).then((tasks) => {
+app.get('/tasks', async (req, res) => {
+
+    try {
+        const tasks = await Task.find({});
         res.send(tasks);
-    }).catch((error) => {
+    } catch (error) {
         res.status.send(500);
-    })
+    }
+
 })
 
-app.get('/tasks/:id', (req, res) => {
+app.get('/tasks/:id', async (req, res) => {
     const _id = req.params.id;
     if (!_id.match(/^[0-9a-fA-F]{24}$/)) {
         return res.status(400).send();
     }
 
-    Task.findById(_id).then((task) => {
+    try {
+        const task = await Task.findById(_id);
         if (!task) {
             return res.status(404).send();
         }
-
         res.send(task);
-
-    }).catch((error) => {
+    } catch (error) {
         res.status(500).send();
-    })
+    }
+
 })
 
 app.listen(port, () => {
