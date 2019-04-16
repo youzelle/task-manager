@@ -10,10 +10,6 @@ const {MongoClient, ObjectID} = require('mongodb');
 const connectionURL = 'mongodb://127.0.0.1:27017';
 const databaseName = 'task-manager';
 
-// //generate own id's
-// const id = new ObjectID();
-// console.log(id.id.length);
-// console.log(id.toHexString().length);
 
 //connect specific server
 MongoClient.connect(connectionURL, {useNewUrlParser: true}, (error, client) => {

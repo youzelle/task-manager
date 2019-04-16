@@ -11,42 +11,45 @@ const port = process.env.PORT || 3000;
 
 app.use(express.json());
 
-app.post('/users', (req, res) => {
+app.post('/users', async (req, res) => {
     const user = new User(req.body);
 
-    user.save().then(() => {
+    try {
+        await user.save();
         res.status(201).send(user);
-    }).catch((error) => {
+    } catch (error) {
         res.status(400).send(error);
-    });
+    }
+
 });
 
-app.get('/users', (req, res) => {
-    User.find({}).then((users) => {
+app.get('/users', async (req, res) => {
+    try { 
+        const users = await User.find({});
         res.send(users);
-    }).catch((error) => {
-        res.status(500);
-    });
+    } catch (error) {
+        res.status(500).send();
+    }
 });
 
 //Server error is returned when mongoose cannot cast the supplied Id to the type ObjectId
 //to 12 bytes
-app.get('/users/:id', (req,res) => {
+app.get('/users/:id', async (req,res) => {
     const _id = req.params.id;
     if (!_id.match(/^[0-9a-fA-F]{24}$/)) {
         return res.status(400).send();
     }
 
-    User.findById(_id).then((user) => {
-        if (!user) {
-            return res.status(404).send();
-        }
+    try {
+       const user = await User.findById(_id);
+       if (!user) {
+        return res.status(404).send();
+       }
 
-        res.send(user);
-
-    }).catch((error) => {
+       res.send(user);
+    } catch (error) {
         res.status(500).send();
-    })
+    }
 })
 
 app.post('/tasks', (req, res) => {
